@@ -6,8 +6,45 @@
 
 import managmentdb
 
+# Next, we start off with our main function which will show the menu and trigger the user's choice commands.
+# For readibility, I put the functions below the main function as it was easier to read for me.
+def main():
 
-# This functions displayed the menu that allows the user to make his choice of operations
+    while True:
+        show_menu()
+        user_choice = input("Choice: ")
+
+    
+        if user_choice == "1":
+            name_search = speaker_search()
+            print(f"Session Details for: {name_search}")
+            print("--------------------------------------------")
+            managmentdb.search_database(name_search)
+
+
+        elif user_choice == "2":
+            company_id = company_search()
+            company_name = managmentdb.display_company_name(company_id)
+
+            if company_name == None:
+                print(f"Company with ID {company_id} doesn't exist")
+
+            else:
+                print(f"{company_name} Attendees") 
+                print("--------------------")
+                managmentdb.company_search(company_id)
+
+
+        elif user_choice == "x":
+            print("Goodbye")
+            break
+
+        else:
+            print("Invalid choice. Please select one of the options")
+
+
+
+# This functions displays the menu that allows the user to make his choice of operations
 def show_menu():
     print()
     print("Conference Management")
@@ -23,7 +60,8 @@ def show_menu():
     print("x - Exit Application")
 
 
-# Must explain this as I've found in Stack Overflow
+# This function, has it was taken from Stack Overflow, basically makes it so the user doesn't use numbers for names. A name has letters 
+# and this will prevent the user from making mistakes. 
 def speaker_search():
     while True:
         speaker_name = input("Enter speaker name: ").strip()
@@ -35,39 +73,25 @@ def speaker_search():
         else:
             return speaker_name
 
+
 def company_search():
-    companyID = input(int("Enter Company ID: "))
-
-
-
-
-
-
-
-def main():
-
     while True:
-        show_menu()
-        user_choice = input("Choice: ")
+        companyID = input("Enter Company ID: ").strip()
 
-        if user_choice == "1":
-            name_search = speaker_search()
-            print(f"Session Details for: {name_search}")
-            print("--------------------------------------------")
-            managmentdb.search_database(name_search)
+        if companyID == "":
+            print("Please enter a valid Company ID")
 
-
-        elif user_choice == "2":
-            company_id = company_search()
-            print("Good try!")    
-
-
-        elif user_choice == "x":
-            print("Goodbye")
-            break
-
+            # This checks if the ID entered is a digit through the isdigit function.
+        elif not companyID.isdigit():
+            print("Invalid input. Company ID must be a whole number.")
         else:
-            print("Invalid choice. Please select one of the options")
+            return companyID
+
+
+
+
+
+
 
 
 
@@ -78,3 +102,4 @@ if __name__ == "__main__":
 # For the block on non string names: # Source - https://stackoverflow.com/a/39613634
 # Posted by Dimitris Fasarakis Hilliard, modified by community. See post 'Timeline' for change history
 # Retrieved 2026-04-27, License - CC BY-SA 3.0
+# To check if something is a digit - https://www.w3schools.com/python/ref_string_isdigit.asp
