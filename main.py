@@ -34,6 +34,11 @@ def main():
                 print("--------------------")
                 managmentdb.company_search(company_id)
 
+        elif user_choice == "3":
+            print("Add new attendee")   
+            print("----------------")     
+            add_attendee_details()  
+
 
         elif user_choice == "x":
             print("Goodbye")
@@ -88,7 +93,15 @@ def company_search():
             return companyID
 
 
+def add_attendee_details():
+    while True:
+        attendee_id = input("Enter attendee ID: ")
+        attendee_name = input("Enter attendee name: ")
+        attendee_dob = input("Enter attendee Date of Birth: ")
+        attendee_gender = input("Enter attendee gender: ")
+        attendee_company_id = input("Enter attendee company ID: ")
 
+        return attendee_id, attendee_name, attendee_dob, attendee_gender, attendee_company_id
 
 
 

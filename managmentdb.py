@@ -113,5 +113,16 @@ def company_search(company_id):
     cursor.close ()
 
 
+def insert_attendee():
+    if conn is None:
+        connect()
+
+    query = '''
+            INSERT INTO attendee (attendeeID, attendeeName, attendeeDOB, attendeeGender, attendeeCompanyID)
+            VALUES (%s, %s, %s, %s, %s,)
+            '''
+
+
+
     # References:
     # For the "|" separator: https://www.geeksforgeeks.org/python/python-sep-parameter-print/
