@@ -73,6 +73,8 @@ def search_database(name):
             # I wasn't sure how to separate properly, until I found the "sep" function
             print(s["speakerName"], s["sessionTitle"], s["roomName"], sep="  |  ")
 
+    cursor.close()
+
 # This function searches the database based on the ID the user has entered
 def company_search(company_id):
     global conn 
@@ -110,19 +112,27 @@ def company_search(company_id):
         print("Attendee Name | DOB | Name of Session | Speaker Name | Session Date | Room Name\n")
         for s in results:     
             print(s["attendeeName"], s["attendeeDOB"], s["sessionTitle"], s["speakerName"], s["sessionDate"], s["roomName"], sep="  |  ") 
-    cursor.close ()
+    cursor.close()
 
 
-def insert_attendee():
+def insert_attendee(attendeeID, attendeeName, attendeeDOB, attendeeGender, attendeeCompanyID):
+    global conn 
+
     if conn is None:
         connect()
 
     query = '''
             INSERT INTO attendee (attendeeID, attendeeName, attendeeDOB, attendeeGender, attendeeCompanyID)
-            VALUES (%s, %s, %s, %s, %s,)
+            VALUES (%s, %s, %s, %s, %s)
             '''
 
+    cursor = conn.cursor()
+    cursor.execute(query, (attendeeID, attendeeName, attendeeDOB, attendeeGender, attendeeCompanyID))
+    conn.commit()
+    cursor.close()
 
+    print ("Attendee successfully added")
+    print ("---------------------------")
 
     # References:
     # For the "|" separator: https://www.geeksforgeeks.org/python/python-sep-parameter-print/

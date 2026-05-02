@@ -5,6 +5,8 @@
 # First, we import the modules we need, including our managmentdb module that interacts with the Database
 
 import managmentdb
+import datetime
+import pymysql
 
 # Next, we start off with our main function which will show the menu and trigger the user's choice commands.
 # For readibility, I put the functions below the main function as it was easier to read for me.
@@ -36,9 +38,25 @@ def main():
 
         elif user_choice == "3":
             print("Add new attendee")   
-            print("----------------")     
-            add_attendee_details()  
+            print("----------------")   
 
+            try:  
+                attendee_id, attendee_name, attendee_dob, attendee_gender, attendee_company_id = add_attendee_details()
+                managmentdb.insert_attendee(attendee_id, attendee_name, attendee_dob, attendee_gender, attendee_company_id)
+            except pymysql.err.IntegrityError as e:
+                print (f"***ERROR*** Attendee ID {attendee_id} already exists")
+            except Exception as e:
+                print("***ERROR*** An unkown error has occurred")
+
+        elif user_choice == "4":
+            chosen_attendee_id = input("Enter Attendee ID: ")
+
+        elif user_choice == "5":
+            print("Working")
+
+        elif user_choice == "6":
+            chosen_attendee_id = input("Enter Attendee ID: ")
+           
 
         elif user_choice == "x":
             print("Goodbye")
@@ -48,6 +66,13 @@ def main():
             print("Invalid choice. Please select one of the options")
 
 
+# This helps validate that the user is using the proper datetime format
+def validate_date(date_text):
+        try:
+            datetime.date.fromisoformat(date_text)
+            return True
+        except ValueError:
+            return False
 
 # This functions displays the menu that allows the user to make his choice of operations
 def show_menu():
@@ -92,16 +117,66 @@ def company_search():
         else:
             return companyID
 
-
+# Had to divide the error checks between here and above... Not sure how to put everything in one place for better organisation
 def add_attendee_details():
-    while True:
-        attendee_id = input("Enter attendee ID: ")
-        attendee_name = input("Enter attendee name: ")
-        attendee_dob = input("Enter attendee Date of Birth: ")
-        attendee_gender = input("Enter attendee gender: ")
-        attendee_company_id = input("Enter attendee company ID: ")
+    valid_genders = ["Male", "Female"]
 
-        return attendee_id, attendee_name, attendee_dob, attendee_gender, attendee_company_id
+    while True:
+        attendee_id = input("Enter attendee ID: ").strip()
+
+        if attendee_id == "":
+            print("***ERROR*** Please enter a valid Attendee ID")
+        elif not attendee_id.isdigit():
+            print("***ERROR*** Invalid input. Attendee ID must be a whole number.")
+        else:
+            break
+
+    while True:
+        attendee_name = input("Enter attendee name: ").strip()
+
+        if attendee_name == "":
+            print("***ERROR*** Please enter a valid attendee name")
+        elif any(char.isdigit() for char in attendee_name):
+            print("***ERROR*** Invalid input. Attendee name cannot contain numbers.")
+        else:
+            break
+
+    while True:
+        attendee_dob = input("Enter attendee Date of Birth YYYY-MM-DD: ").strip()
+
+        if attendee_dob == "":
+            print("***ERROR*** Please enter a valid Date of Birth")
+        elif not validate_date(attendee_dob):
+            print("***ERROR*** Incorrect data format, date should be YYYY-MM-DD")
+        else:
+            break
+
+    while True:
+        attendee_gender = input("Enter attendee gender: ").strip()
+
+        if attendee_gender == "":
+            print("***ERROR*** Please enter a valid gender")
+        elif attendee_gender not in valid_genders:
+            print("***ERROR*** Invalid gender. Please enter Male or Female.")
+        else:
+            break
+
+    while True:
+        attendee_company_id = input("Enter attendee company ID: ").strip()
+
+        if attendee_company_id == "":
+            print("***ERROR*** Please enter a valid Company ID")
+        elif not attendee_company_id.isdigit():
+            print("***ERROR*** Invalid input. Company ID must be a whole number.")
+        elif managmentdb.display_company_name(attendee_company_id) is None:
+            print(f"***ERROR*** Company with ID {attendee_company_id} doesn't exist")
+        else:
+            break
+
+    return attendee_id, attendee_name, attendee_dob, attendee_gender, attendee_company_id
+
+
+
 
 
 
@@ -112,7 +187,12 @@ if __name__ == "__main__":
     main()
 
 # References: 
-# For the block on non string names: # Source - https://stackoverflow.com/a/39613634
+# For the block on non string names - # Source - https://stackoverflow.com/a/39613634
 # Posted by Dimitris Fasarakis Hilliard, modified by community. See post 'Timeline' for change history
 # Retrieved 2026-04-27, License - CC BY-SA 3.0
+
 # To check if something is a digit - https://www.w3schools.com/python/ref_string_isdigit.asp
+
+# For the Datetime format idea - # Source - https://stackoverflow.com/a/16870699
+# Posted by jamylak, modified by community. See post 'Timeline' for change history
+# Retrieved 2026-05-02, License - CC BY-SA 4.0
