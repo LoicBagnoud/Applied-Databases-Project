@@ -48,15 +48,45 @@ def main():
             except Exception as e:
                 print("***ERROR*** An unkown error has occurred")
 
+
+        # CURRENTLY WORKING ON THIS (DONT FORGET)
         elif user_choice == "4":
             chosen_attendee_id = input("Enter Attendee ID: ")
 
+
+
+
+
+
+
+
+
+
+
+
         elif user_choice == "5":
-            print("Working")
+            print("Work in progress")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         elif user_choice == "6":
-            chosen_attendee_id = input("Enter Attendee ID: ")
-           
+            print("Rooms")
+            print("-----")
+            managmentdb.view_rooms()
 
         elif user_choice == "x":
             print("Goodbye")

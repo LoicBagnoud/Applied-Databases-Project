@@ -134,5 +134,37 @@ def insert_attendee(attendeeID, attendeeName, attendeeDOB, attendeeGender, atten
     print ("Attendee successfully added")
     print ("---------------------------")
 
+
+def view_rooms():
+    global conn 
+
+    if conn is None:
+        connect()
+
+    query = """
+            SELECT roomID, roomName, capacity
+            FROM room
+            ORDER BY roomID
+            """
+
+    cursor = conn.cursor()
+    cursor.execute(query)
+
+    # Was constantly getting an error here that I didn't understand, until I discovered that "fetchone" 
+    # goes through one record. "Fetchall" is the correct one here since it gets me all the rows.
+    result = cursor.fetchall()
+
+    
+    print("RoomID | RoomName | Capacity\n")
+
+    for r in result:     
+        print(r["roomID"], r["roomName"], r["capacity"], sep="  |  ") 
+
+    cursor.close()
+
+
+
+
     # References:
     # For the "|" separator: https://www.geeksforgeeks.org/python/python-sep-parameter-print/
+    # For the differences between fetchone vs fetchall - https://pynative.com/python-cursor-fetchall-fetchmany-fetchone-to-read-rows-from-table/
