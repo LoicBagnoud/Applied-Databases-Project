@@ -4,9 +4,10 @@
 
 # First, we import the modules we need, including our managmentdb module that interacts with the Database
 
-import managmentdb
 import datetime
 import pymysql
+import managmentdb
+import relationsdb
 
 # Next, we start off with our main function which will show the menu and trigger the user's choice commands.
 # For readibility, I put the functions below the main function as it was easier to read for me.
@@ -49,9 +50,16 @@ def main():
                 print("***ERROR*** An unkown error has occurred")
 
 
-        # CURRENTLY WORKING ON THIS (DONT FORGET)
         elif user_choice == "4":
-            chosen_attendee_id = input("Enter Attendee ID: ")
+            attendee_name = view_connected_attendees()
+            attendee_connections = relationsdb.get_id_relations
+            
+            if attendee_name is None:
+                print(f"Attendee ID {attendee_name} does not exist in MySQL")
+            else:
+                print(f"Attendee Name: {attendee_name}")
+                print("--------------------------------")
+
 
 
 
@@ -205,6 +213,28 @@ def add_attendee_details():
 
     return attendee_id, attendee_name, attendee_dob, attendee_gender, attendee_company_id
 
+def view_connected_attendees():
+    while True:
+        attendee_id = input("Enter Attendee ID: ").strip()
+
+        if attendee_id == "":
+            print("***ERROR*** Please enter a valid Attendee ID")
+
+        elif not attendee_id.isdigit():
+            print("***ERROR*** Invalid attendee ID")
+
+        else:
+            attendee_name = managmentdb.search_attendeeid_get_name(attendee_id)
+
+            if attendee_name is None:
+                print(f"Attendee ID {attendee_id} does not exist in MySQL")
+            else:
+                return attendee_name
+            
+        
+
+
+        
 
 
 

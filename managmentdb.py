@@ -14,6 +14,30 @@ def connect():
                            db="appdbproj", 
                            cursorclass=pymysql.cursors.DictCursor)
 
+# This function allows us to check for a specific attendee and get their name.
+def search_attendeeid_get_name(attendeeID):
+    global conn
+
+    if conn is None:
+        connect()
+
+    query = '''
+            SELECT attendeeName
+            FROM attendee
+            WHERE attendeeID = %s
+            '''
+
+    cursor = conn.cursor()
+    cursor.execute(query, (attendeeID,))
+    result = cursor.fetchone()
+    cursor.close()
+
+    if result is None:
+        return None
+
+    return result["attendeeName"]
+
+
 # This functions allows us to basically see if a company exists or not
 def display_company_name(company_id):
     global conn
@@ -21,11 +45,11 @@ def display_company_name(company_id):
     if conn is None:
         connect()
 
-    query = """
-        SELECT companyName
-        FROM company
-        WHERE companyID = %s
-    """
+    query = '''
+            SELECT companyName
+            FROM company
+            WHERE companyID = %s
+            '''
 
     cursor = conn.cursor()
     cursor.execute(query, (company_id,))
@@ -83,7 +107,7 @@ def company_search(company_id):
     if conn is None:
         connect()
 
-    query = """
+    query = '''
             SELECT 
                 a.attendeeName, 
                 a.attendeeDOB, 
@@ -100,7 +124,7 @@ def company_search(company_id):
                 ON s.roomID = r.roomID
             WHERE a.attendeeCompanyID = %s
             ORDER BY a.attendeeName
-            """
+            '''
         
     cursor = conn.cursor()
     cursor.execute(query, (company_id,))
@@ -141,11 +165,11 @@ def view_rooms():
     if conn is None:
         connect()
 
-    query = """
+    query = '''
             SELECT roomID, roomName, capacity
             FROM room
             ORDER BY roomID
-            """
+            '''
 
     cursor = conn.cursor()
     cursor.execute(query)
