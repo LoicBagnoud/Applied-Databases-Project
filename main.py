@@ -10,7 +10,7 @@ import managmentdb
 import relationsdb
 
 # Next, we start off with our main function which will show the menu and trigger the user's choice commands.
-# For readibility, I put the functions below the main function as it was easier to read for me.
+# For readibility, I put the functions below the main function as it was easier to read for me.4
 def main():
 
     while True:
@@ -51,29 +51,31 @@ def main():
 
 
         elif user_choice == "4":
-            attendee_name = view_connected_attendees()
-            attendee_connections = relationsdb.get_id_relations
+            attendee_id, attendee_name = check_attendee_id()
             
+
             if attendee_name is None:
-                print(f"Attendee ID {attendee_name} does not exist in MySQL")
+                print(f"Attendee ID {attendee_id} does not exist")
+
             else:
                 print(f"Attendee Name: {attendee_name}")
                 print("--------------------------------")
 
+                connected_ids = relationsdb.get_id_relations(attendee_id)
 
+                if len(connected_ids) == 0:
+                    print("No connections")
 
+                else:
+                    print("These attendees are connected:")
 
-
-
-
-
-
-
-
+                    for connected_id in connected_ids:
+                        connected_name = managmentdb.search_attendeeid_get_name(connected_id)
+                        print(connected_id, connected_name, sep=" | ")
 
 
         elif user_choice == "5":
-            print("Work in progress")
+            
 
 
 
@@ -213,7 +215,8 @@ def add_attendee_details():
 
     return attendee_id, attendee_name, attendee_dob, attendee_gender, attendee_company_id
 
-def view_connected_attendees():
+def check_attendee_id():
+    
     while True:
         attendee_id = input("Enter Attendee ID: ").strip()
 
@@ -225,13 +228,11 @@ def view_connected_attendees():
 
         else:
             attendee_name = managmentdb.search_attendeeid_get_name(attendee_id)
-
-            if attendee_name is None:
-                print(f"Attendee ID {attendee_id} does not exist in MySQL")
-            else:
-                return attendee_name
+            return attendee_id, attendee_name
             
-        
+
+
+
 
 
         

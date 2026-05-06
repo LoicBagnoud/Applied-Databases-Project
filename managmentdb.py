@@ -1,11 +1,12 @@
 # This is the code to interact with the MySQL database
 # Author: Loic Bagnoud
 
+# We start by importing out pymysql package
 import pymysql
 
 conn = None
 
-# This is our connector
+# This is our connector and here we're just following the documentation
 def connect():
     global conn
     conn = pymysql.connect(host="localhost", 
@@ -14,7 +15,7 @@ def connect():
                            db="appdbproj", 
                            cursorclass=pymysql.cursors.DictCursor)
 
-# This function allows us to check for a specific attendee and get their name.
+# This function allows us to check for a specific attendee and get their name. This will be useful for Option 4
 def search_attendeeid_get_name(attendeeID):
     global conn
 
@@ -38,7 +39,8 @@ def search_attendeeid_get_name(attendeeID):
     return result["attendeeName"]
 
 
-# This functions allows us to basically see if a company exists or not
+# This functions allows us to basically see if a company exists or not. Useful for error
+# checking in option 2
 def display_company_name(company_id):
     global conn
 
@@ -63,7 +65,8 @@ def display_company_name(company_id):
     return result["companyName"]
 
     
-# The function below searches the database based on name entered
+# The function below searches the database based on name entered. Useful for option 1, which checks on name
+# and we need it to catch non-existing names.
 def search_database(name):
     global conn 
 
@@ -99,11 +102,12 @@ def search_database(name):
 
     cursor.close()
 
-# This function searches the database based on the ID the user has entered
+# This function searches the database based on the ID the user has entered. It's the main
+# core of Option 2.
 def company_search(company_id):
     global conn 
 
-# We make the connection
+
     if conn is None:
         connect()
 
@@ -139,11 +143,13 @@ def company_search(company_id):
     cursor.close()
 
 
+# This is for Option 3. We have all the details we need to insert into the database
 def insert_attendee(attendeeID, attendeeName, attendeeDOB, attendeeGender, attendeeCompanyID):
     global conn 
 
     if conn is None:
         connect()
+
 
     query = '''
             INSERT INTO attendee (attendeeID, attendeeName, attendeeDOB, attendeeGender, attendeeCompanyID)
@@ -159,6 +165,7 @@ def insert_attendee(attendeeID, attendeeName, attendeeDOB, attendeeGender, atten
     print ("---------------------------")
 
 
+# This is for Option 6. It's the MySQL to get the Rooms based on the room ID.
 def view_rooms():
     global conn 
 
