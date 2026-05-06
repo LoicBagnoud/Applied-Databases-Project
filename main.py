@@ -51,7 +51,7 @@ def main():
 
 
         elif user_choice == "4":
-            attendee_id, attendee_name = check_attendee_id()
+            attendee_id, attendee_name = check_attendee_id_both_databases()
             
 
             if attendee_name is None:
@@ -76,6 +76,9 @@ def main():
 
         elif user_choice == "5":
             
+            attendee_1, attendee_2 = check_attendee_id_1_and_2_connections()
+
+
 
 
 
@@ -215,7 +218,7 @@ def add_attendee_details():
 
     return attendee_id, attendee_name, attendee_dob, attendee_gender, attendee_company_id
 
-def check_attendee_id():
+def check_attendee_id_both_databases():
     
     while True:
         attendee_id = input("Enter Attendee ID: ").strip()
@@ -230,6 +233,33 @@ def check_attendee_id():
             attendee_name = managmentdb.search_attendeeid_get_name(attendee_id)
             return attendee_id, attendee_name
             
+def check_attendee_id_1_and_2_connections():
+
+    while True:
+
+        attendee_1 = input("Enter attendee 1 ID: ").strip()
+        attendee_2 = input("Enter attendee 2 ID: ").strip()
+
+        if attendee_1 == "" or attendee_2 == "":
+            print("***ERROR*** Please enter a valid Attendee ID")
+
+        elif not attendee_1.isdigit() or not attendee_2.isdigit():
+            print("***ERROR*** Invalid attendee ID")
+                
+        else:    
+            filtered_attendee_1 = relationsdb.attendee_exists(attendee_1)
+            filtered_attendee_2 = relationsdb.attendee_exists(attendee_2)
+
+            if not filtered_attendee_1 or not filtered_attendee_2:
+                print("***ERROR*** One or both of attendee IDs do not exist")
+
+            else:
+                print("Yay")
+
+
+
+     
+
 
 
 
