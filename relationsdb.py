@@ -16,10 +16,10 @@ def connect():
 # Next, we write our specific functions and queries. 
 # The first one checks if a specific attendee ID exists in the neo4j database
 def attendee_exists_tx(tx, attendee_id):
-    query = """
+    query = '''
             MATCH (a:Attendee {AttendeeID: $attendee_id})
             RETURN a.AttendeeID AS attendee_id
-            """
+            '''
 
     result = tx.run(query, attendee_id=int(attendee_id))
     record = result.single()
@@ -42,16 +42,42 @@ def get_id_relations_tx(tx, attendee_id):
     return ids
 
 def create_connection_tx(tx, attendee_id_1, attendee_id_2):
-    query = """
+    query = '''
             MATCH (a:Attendee {AttendeeID: $attendee_id_1})
             MATCH (b:Attendee {AttendeeID: $attendee_id_2})
             MERGE (a)-[:CONNECTED_TO]->(b)
             RETURN a.AttendeeID AS attendee_id_1, b.AttendeeID AS attendee_id_2
-            """
+            '''
 
     result = tx.run(query, attendee_id_1=int(attendee_id_1), attendee_id_2=int(attendee_id_2))
 
     return result.single() is not None
+
+
+# The following function is to allow us to check if a connection actually exists. I had an original proposal
+# but ChatGPT actually improved with a nice TRUE/FALSE check. Putting reference below
+def connection_exists_tx(tx, attendee_id_1, attendee_id_2):
+    query = '''
+            MATCH (a:Attendee {AttendeeID: $attendee_id_1})
+            MATCH (b:Attendee {AttendeeID: $attendee_id_2})
+            RETURN EXISTS {
+                MATCH (a)-[:CONNECTED_TO]-(b)
+            } AS already_connected
+            '''
+
+    result = tx.run(
+        query,
+        attendee_id_1=int(attendee_id_1),
+        attendee_id_2=int(attendee_id_2)
+    )
+
+    record = result.single()
+
+    if record is None:
+        return False
+
+    return record["already_connected"]
+
 
 
 # Afterwards, we execute those queries after we called them above. 
@@ -84,6 +110,16 @@ def create_connection(attendee_id_1, attendee_id_2):
 
     with driver.session() as session:
         return session.execute_write(create_connection_tx, attendee_id_1, attendee_id_2)
+    
+def connection_exists(attendee_id_1, attendee_id_2):
+    global driver
+
+    if driver is None:
+        connect()
+
+    with driver.session() as session:
+        return session.execute_write(connection_exists_tx, attendee_id_1, attendee_id_2)
 
 # References:
 # Neo4j documentation - https://neo4j.com/docs/api/python-driver/current/api.html
+# ChatGPT check connection proposal - https://chatgpt.com/share/69fcce3d-a9b0-8393-9e63-2698d5a8aaf4

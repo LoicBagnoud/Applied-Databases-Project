@@ -75,26 +75,14 @@ def main():
 
 
         elif user_choice == "5":
-            
             attendee_1, attendee_2 = check_attendee_id_1_and_2_connections()
 
+            connection_created = relationsdb.create_connection(attendee_1, attendee_2)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            if connection_created:
+                print(f"Attendee {attendee_1} is now connected to {attendee_2}")
+            else:
+                print("***ERROR*** Connection could not be created")
 
         elif user_choice == "6":
             print("Rooms")
@@ -109,7 +97,7 @@ def main():
             print("Invalid choice. Please select one of the options")
 
 
-# This helps validate that the user is using the proper datetime format
+# This helps validate that the user is using the proper datetime format - Reference below
 def validate_date(date_text):
         try:
             datetime.date.fromisoformat(date_text)
@@ -134,7 +122,7 @@ def show_menu():
 
 
 # This function, has it was taken from Stack Overflow, basically makes it so the user doesn't use numbers for names. A name has letters 
-# and this will prevent the user from making mistakes. 
+# and this will prevent the user from making mistakes - Reference below
 def speaker_search():
     while True:
         speaker_name = input("Enter speaker name: ").strip()
@@ -245,34 +233,22 @@ def check_attendee_id_1_and_2_connections():
 
         elif not attendee_1.isdigit() or not attendee_2.isdigit():
             print("***ERROR*** Invalid attendee ID")
+
+        elif attendee_1 == attendee_2:
+            print("***ERROR*** An attendee cannot be connected to themselves")
                 
         else:    
-            filtered_attendee_1 = relationsdb.attendee_exists(attendee_1)
-            filtered_attendee_2 = relationsdb.attendee_exists(attendee_2)
+            attendee_1_exists = relationsdb.attendee_exists(attendee_1)
+            attendee_2_exists = relationsdb.attendee_exists(attendee_2)
 
-            if not filtered_attendee_1 or not filtered_attendee_2:
-                print("***ERROR*** One or both of attendee IDs do not exist")
+            if not attendee_1_exists or not attendee_2_exists:
+                print("***ERROR*** One or both attendee IDs do not exist")
+
+            elif relationsdb.connection_exists(attendee_1, attendee_2):
+                print("***ERROR*** These attendees are already connected")
 
             else:
-                print("Yay")
-
-
-
-     
-
-
-
-
-
-
-        
-
-
-
-
-
-
-
+                return attendee_1, attendee_2
 
 if __name__ == "__main__":
     main()

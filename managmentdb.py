@@ -103,7 +103,10 @@ def search_database(name):
     cursor.close()
 
 # This function searches the database based on the ID the user has entered. It's the main
-# core of Option 2.
+# core of Option 2. 
+# An important note here is that I wasn't really sure why changes remained in the Database but when while I was running the application.
+# ChatGPT explained that it's because I'm only adding attendees but the following shows only attendees that have sessions. This was because I 
+# was using an INNER JOIN. I went ahead and updated this to a LEFT JOIN to guarantee those show up within the application for option 2 - Reference below
 def company_search(company_id):
     global conn 
 
@@ -120,11 +123,11 @@ def company_search(company_id):
                 s.sessionDate,
                 r.roomName
             FROM attendee a
-            INNER JOIN registration reg
+            LEFT JOIN registration reg
                 ON a.attendeeID = reg.attendeeID
-            INNER JOIN session s
+            LEFT JOIN session s
                 ON reg.sessionID = s.sessionID
-            INNER JOIN room r
+            LEFT JOIN room r
                 ON s.roomID = r.roomID
             WHERE a.attendeeCompanyID = %s
             ORDER BY a.attendeeName
@@ -139,7 +142,7 @@ def company_search(company_id):
     else:
         print("Attendee Name | DOB | Name of Session | Speaker Name | Session Date | Room Name\n")
         for s in results:     
-            print(s["attendeeName"], s["attendeeDOB"], s["sessionTitle"], s["speakerName"], s["sessionDate"], s["roomName"], sep="  |  ") 
+            print(s["attendeeName"], s["attendeeDOB"], s["sessionTitle"] or "No session registered", s["speakerName"] or "-", s["sessionDate"] or "-", s["roomName"] or "-", sep="  |  ") 
     cursor.close()
 
 
@@ -199,3 +202,4 @@ def view_rooms():
     # References:
     # For the "|" separator: https://www.geeksforgeeks.org/python/python-sep-parameter-print/
     # For the differences between fetchone vs fetchall - https://pynative.com/python-cursor-fetchall-fetchmany-fetchone-to-read-rows-from-table/
+    # For the LEFT JOIN SQL proposal - ChatGPT - https://chatgpt.com/share/69fcd369-74e4-8394-8556-45b5f8a09ca5
