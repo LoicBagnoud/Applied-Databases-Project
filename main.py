@@ -2,7 +2,8 @@
 # with a MySQL and Neo4j database
 # Author: Loic Bagnoud
 
-# First, we import the modules we need, including our managmentdb module that interacts with the Database
+# First, we import the modules we need, including our managmentdb module that interacts with the Mysql Database
+# as well as our relationsbd module which interacts with the Neo4j database.
 
 import datetime
 import pymysql
@@ -10,7 +11,7 @@ import managmentdb
 import relationsdb
 
 # Next, we start off with our main function which will show the menu and trigger the user's choice commands.
-# For readibility, I put the functions below the main function as it was easier to read for me.4
+# For readibility, I put the functions below the main function as it was easier to read for me.
 def main():
 
     while True:
@@ -49,7 +50,11 @@ def main():
             except Exception as e:
                 print("***ERROR*** An unkown error has occurred")
 
-
+        # After checking in MySQL if the ID exists, we check for connections in Neo4j. 
+        # After getting that ID and checking if it has connections, we run the function below from our neo4j file. 
+        # Additionally, because the neo4j database already has IDs that exist in MySQL, we only need to check MYSQL to see if something exists.
+        # Since things will get added there, we already know that it won't be in Neo4j. 
+        # Thus, a connection would never begin to exist. 
         elif user_choice == "4":
             attendee_id, attendee_name = check_attendee_id_both_databases()
             
@@ -59,7 +64,7 @@ def main():
 
             else:
                 print(f"Attendee Name: {attendee_name}")
-                print("--------------------------------")
+                print("-------------------------------")
 
                 connected_ids = relationsdb.get_id_relations(attendee_id)
 
@@ -73,7 +78,7 @@ def main():
                         connected_name = managmentdb.search_attendeeid_get_name(connected_id)
                         print(connected_id, connected_name, sep=" | ")
 
-
+        # 
         elif user_choice == "5":
             attendee_1, attendee_2 = check_attendee_id_1_and_2_connections()
 
@@ -96,6 +101,8 @@ def main():
         else:
             print("Invalid choice. Please select one of the options")
 
+# Next, these are all the functions that that help the main menu above as well as the error checks. 
+# Had to divide the error checks between here and above... Not sure how to put everything in one place for better organisation.
 
 # This helps validate that the user is using the proper datetime format - Reference below
 def validate_date(date_text):
@@ -121,7 +128,7 @@ def show_menu():
     print("x - Exit Application")
 
 
-# This function, has it was taken from Stack Overflow, basically makes it so the user doesn't use numbers for names. A name has letters 
+# This function, has it was taken from Stack Overflow, basically makes it so the user doesn't use numbers for names. A name has strings 
 # and this will prevent the user from making mistakes - Reference below
 def speaker_search():
     while True:
@@ -134,7 +141,7 @@ def speaker_search():
         else:
             return speaker_name
 
-
+# This one asks for the Company ID for option 2 and stores it in a variable above. As usual, we run the normal checks to prevent user error.
 def company_search():
     while True:
         companyID = input("Enter Company ID: ").strip()
@@ -148,8 +155,10 @@ def company_search():
         else:
             return companyID
 
-# Had to divide the error checks between here and above... Not sure how to put everything in one place for better organisation
+# This is to inser attendee details. Valid genders here exist because the MySQL database only accepts Male and Female. 
+# We make the check further below.
 def add_attendee_details():
+
     valid_genders = ["Male", "Female"]
 
     while True:
@@ -172,6 +181,7 @@ def add_attendee_details():
         else:
             break
 
+# Notice in this one the validate_date function above.
     while True:
         attendee_dob = input("Enter attendee Date of Birth YYYY-MM-DD: ").strip()
 
@@ -187,11 +197,15 @@ def add_attendee_details():
 
         if attendee_gender == "":
             print("***ERROR*** Please enter a valid gender")
+
+        # Our check for thee genders
         elif attendee_gender not in valid_genders:
             print("***ERROR*** Invalid gender. Please enter Male or Female.")
         else:
             break
 
+# To check if a company ID exists, we need to go to the managmentdb file and run the query there that searches for that 
+# particular ID that the user has input. This is our check to see if it does or does not exist.
     while True:
         attendee_company_id = input("Enter attendee company ID: ").strip()
 
@@ -206,6 +220,9 @@ def add_attendee_details():
 
     return attendee_id, attendee_name, attendee_dob, attendee_gender, attendee_company_id
 
+# Due to having to check if the ID exists in MySQL and Neo4j, this is a bit more complex. In any case, we first check MySQL
+# with the managmentdb function. This is a simple SELECT WHERE ID equals an input. We get the attendee_name that we then use above.
+# If no name is returned we know the ID doesn't exist because an ID must always have a name. 
 def check_attendee_id_both_databases():
     
     while True:
@@ -220,7 +237,8 @@ def check_attendee_id_both_databases():
         else:
             attendee_name = managmentdb.search_attendeeid_get_name(attendee_id)
             return attendee_id, attendee_name
-            
+
+# This one is to check if connections already exist, while asking for the IDs to check.            
 def check_attendee_id_1_and_2_connections():
 
     while True:

@@ -1,7 +1,7 @@
 # This is the code to interact with the MySQL database
 # Author: Loic Bagnoud
 
-# We start by importing out pymysql package
+# We start by importing our pymysql package
 import pymysql
 
 conn = None
@@ -104,7 +104,7 @@ def search_database(name):
 
 # This function searches the database based on the ID the user has entered. It's the main
 # core of Option 2. 
-# An important note here is that I wasn't really sure why changes remained in the Database but when while I was running the application.
+# An important note here is that I wasn't really sure why changes remained in the Database but while I was running the application.
 # ChatGPT explained that it's because I'm only adding attendees but the following shows only attendees that have sessions. This was because I 
 # was using an INNER JOIN. I went ahead and updated this to a LEFT JOIN to guarantee those show up within the application for option 2 - Reference below
 def company_search(company_id):
