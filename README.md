@@ -9,7 +9,6 @@ It interacts with two databases:
 The program allows the user to view speakers and sessions, search attendees by company, add new attendees, view connected attendees, create new attendee connections, and view rooms.
 
 No extra functionality was provided
----
 
 ## Features
 
