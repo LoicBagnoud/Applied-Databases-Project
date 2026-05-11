@@ -103,7 +103,6 @@ def main():
 
 # Next, these are all the functions that that help the main menu above as well as the error checks. 
 # Had to divide the error checks between here and above... Not sure how to put everything in one place for better organisation.
-
 # This helps validate that the user is using the proper datetime format - Reference below
 def validate_date(date_text):
         try:

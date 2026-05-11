@@ -75,8 +75,6 @@ Additional documentation is provided to correctly import the databases if need b
 - [MySQL Workbench SQL Data Import Wizard](https://dev.mysql.com/doc/workbench/en/wb-admin-export-import-management.html)
 - [MySQL command-line import using SQL dump files](https://dev.mysql.com/doc/refman/9.4/en/import-table.html)
 - [Neo4j Cypher Shell](https://neo4j.com/docs/operations-manual/current/cypher-shell/)
-- [Neo4j JSON import using APOC `apoc.load.json`](https://neo4j.com/docs/apoc/current/import/load-json/)
-- [Neo4j data import overview](https://neo4j.com/docs/getting-started/data-import/)
 
 ## References:
 
